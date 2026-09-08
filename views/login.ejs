@@ -1,0 +1,19 @@
+<% locals.title = __('auth.login_title'); locals.heading = locals.title; %>
+<%- include('partials/auth-start') %>
+<form method="POST" action="/login" class="auth-form">
+    <div class="mb-3">
+        <label class="form-label" for="identifier"><%= __('auth.username') %></label>
+        <input class="form-control bg-dark text-light border-secondary" id="identifier" name="identifier" autocomplete="username" required value="<%= form.identifier || '' %>">
+        <div class="meta-copy mt-1"><%= __('auth.username_hint') %></div>
+    </div>
+    <div class="mb-3">
+        <label class="form-label" for="password"><%= __('auth.password') %></label>
+        <input class="form-control bg-dark text-light border-secondary" id="password" name="password" type="password" autocomplete="current-password" required>
+    </div>
+    <button class="btn btn-warning w-100 fw-bold" type="submit"><%= __('auth.login_submit') %></button>
+</form>
+<p class="auth-links mt-3 mb-0">
+    <a href="/register"><%= __('auth.register_link') %></a>
+    <a href="/forgot"><%= __('auth.forgot_link') %></a>
+</p>
+<%- include('partials/auth-end') %>

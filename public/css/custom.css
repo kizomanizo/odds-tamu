@@ -1,0 +1,817 @@
+@font-face {
+  font-family: "Varsity Team";
+  src: url("/fonts/VarsityTeam-Bold.otf") format("opentype");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+:root {
+  --bg: #121212;
+  --card: #1e1e1e;
+  --line: #3d3d3d;
+  --text: #f4efe4;
+  --muted: #e4d7bf;
+  --tagline: #f0e0a8;
+  --gold: #ffc107;
+  --chungu: #ff6b35;
+  --admin: #2dd4bf;
+  --tap: 44px;
+}
+
+html {
+  color-scheme: dark;
+}
+
+body {
+  background-color: var(--bg);
+  color: var(--text);
+  overflow-x: hidden;
+}
+
+body.mode-chungu .brand-title,
+body.mode-chungu .section-heading,
+body.mode-chungu .loading-title,
+body.mode-chungu .countdown,
+body.mode-chungu .acca-combined {
+  color: var(--chungu);
+}
+
+.app-shell {
+  padding-left: max(1rem, env(safe-area-inset-left));
+  padding-right: max(1rem, env(safe-area-inset-right));
+  padding-bottom: max(1.5rem, env(safe-area-inset-bottom));
+}
+
+.app-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
+}
+
+.app-toolbar {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.5rem;
+  flex-shrink: 0;
+}
+
+.lang-switch {
+  display: flex;
+  gap: 0.4rem;
+}
+
+.brand-title {
+  font-family: "Varsity Team", Impact, "Arial Black", sans-serif;
+  font-size: clamp(1.85rem, 7vw, 3.1rem);
+  letter-spacing: 0.04em;
+  line-height: 1.05;
+  color: var(--gold);
+}
+
+.brand-tagline {
+  color: var(--tagline);
+  font-size: 1.05rem;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  margin-top: 0.35rem;
+  max-width: 36rem;
+}
+
+.section-heading {
+  font-family: "Varsity Team", Impact, "Arial Black", sans-serif;
+  font-size: 1.35rem;
+  letter-spacing: 0.03em;
+  color: var(--gold);
+  margin-bottom: 0.85rem;
+}
+
+.cache-stamp,
+.meta-copy,
+.empty-copy,
+.kickoff-copy,
+.live-clock,
+.mode-hint {
+  color: var(--muted);
+}
+
+.cache-stamp {
+  font-size: 0.95rem;
+}
+
+.mode-hint {
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.meta-copy,
+.kickoff-copy,
+.live-clock {
+  font-size: 0.92rem;
+  font-weight: 500;
+}
+
+.is-hidden {
+  display: none !important;
+}
+
+.form-label {
+  color: var(--text);
+  font-weight: 600;
+}
+
+.form-control {
+  min-height: var(--tap);
+  color: var(--text);
+}
+
+.form-control:focus {
+  color: #fff;
+  border-color: var(--gold);
+  box-shadow: 0 0 0 0.15rem rgba(255, 193, 7, 0.2);
+}
+
+.card {
+  --bs-card-bg: var(--card);
+  --bs-card-color: var(--text);
+  background-color: var(--card);
+  border: 1px solid var(--line);
+  color: var(--text);
+}
+
+.fixture-name {
+  color: #fff8ea;
+  font-weight: 700;
+}
+
+.odds-tabs {
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+}
+
+.odds-tabs .nav-link {
+  color: var(--muted);
+  white-space: nowrap;
+  min-height: var(--tap);
+  display: flex;
+  align-items: center;
+  font-weight: 600;
+}
+
+.odds-tabs .nav-link.active {
+  background-color: #2b2b2b;
+  color: var(--gold);
+  border-color: #555 #555 #2b2b2b;
+}
+
+body.mode-chungu .odds-tabs .nav-link.active {
+  color: var(--chungu);
+}
+
+.table-dark {
+  --bs-table-bg: #1e1e1e;
+  --bs-table-color: var(--text);
+  --bs-table-hover-color: #fff8ea;
+  --bs-table-striped-color: var(--text);
+}
+
+.table-dark thead th {
+  color: var(--muted);
+  font-weight: 700;
+  font-size: 0.82rem;
+  letter-spacing: 0.02em;
+  border-bottom-color: #555;
+}
+
+.badge-sweet {
+  background-color: #198754;
+  font-size: 1rem;
+}
+
+body.mode-chungu .badge-sweet {
+  background-color: #c2410c;
+}
+
+.badge-pick {
+  background: #4b4b4b;
+  color: #fff;
+  font-weight: 600;
+}
+
+.mode-switch {
+  display: inline-flex;
+  border: 1px solid #6b5a22;
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.mode-switch a {
+  color: var(--tagline);
+  text-decoration: none;
+  padding: 0.45rem 0.95rem;
+  min-height: var(--tap);
+  display: inline-flex;
+  align-items: center;
+  font-family: "Varsity Team", Impact, sans-serif;
+  letter-spacing: 0.04em;
+  font-size: 0.95rem;
+}
+
+.mode-switch a.is-on {
+  background: var(--gold);
+  color: #111;
+}
+
+body.mode-chungu .mode-switch a.is-on {
+  background: var(--chungu);
+  color: #111;
+}
+
+.toolbar-pills {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.45rem;
+}
+
+.admin-pill {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--tap);
+  padding: 0.45rem 0.95rem;
+  border-radius: 999px;
+  border: 1px solid #0f766e;
+  color: var(--admin);
+  text-decoration: none;
+  font-family: "Varsity Team", Impact, sans-serif;
+  letter-spacing: 0.04em;
+  font-size: 0.95rem;
+  background: #042f2e;
+}
+
+.admin-pill:hover,
+.admin-pill.is-on {
+  background: var(--admin);
+  color: #042f2e;
+}
+
+.session-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.35rem 0.6rem;
+  color: var(--muted);
+  font-size: 0.82rem;
+  font-weight: 600;
+  max-width: 28rem;
+  text-align: right;
+}
+
+.upcoming-kickoffs {
+  margin-top: 0.35rem;
+  padding-top: 0.45rem;
+  border-top: 1px solid var(--line);
+}
+
+.upcoming-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.32rem 0;
+  border-bottom: 1px solid #2f2f2f;
+  font-size: 0.88rem;
+}
+
+.upcoming-row:last-child {
+  border-bottom: 0;
+}
+
+.auth-body {
+  min-height: 100vh;
+}
+
+.auth-shell {
+  width: min(28rem, calc(100% - 2rem));
+  margin: 0 auto;
+  padding: 2.5rem 0 3rem;
+}
+
+.auth-brand {
+  text-align: center;
+  margin-bottom: 1.25rem;
+}
+
+.auth-brand .lang-switch {
+  justify-content: center;
+}
+
+.auth-card {
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.35);
+}
+
+.auth-links {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.auth-links a {
+  color: var(--gold);
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.flash {
+  border-radius: 0.6rem;
+  padding: 0.7rem 0.85rem;
+  margin-bottom: 1rem;
+  font-weight: 600;
+}
+
+.flash-ok {
+  background: #12352a;
+  color: #8ef0c2;
+}
+
+.flash-error {
+  background: #3a1515;
+  color: #ffb4b4;
+}
+
+.field-msg {
+  min-height: 1.1rem;
+  font-size: 0.82rem;
+  margin-top: 0.25rem;
+  color: var(--muted);
+}
+
+.field-msg.is-ok,
+.meta-copy.is-ok {
+  color: #8ef0c2;
+}
+
+.field-msg.is-bad,
+.meta-copy.is-bad {
+  color: #ffb4b4;
+}
+
+.contact-box {
+  background: #161616;
+  border: 1px solid var(--line);
+  border-radius: 0.7rem;
+  padding: 0.85rem 1rem;
+}
+
+.contact-box a {
+  color: var(--gold);
+  font-weight: 800;
+  font-size: 1.1rem;
+  text-decoration: none;
+}
+
+.stat-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.75rem;
+}
+
+.stat-card {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 0.75rem;
+  padding: 0.85rem 1rem;
+}
+
+.stat-card.accent-pending {
+  border-color: #b45309;
+}
+
+.stat-label {
+  color: var(--muted);
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.stat-value {
+  font-family: "Varsity Team", Impact, sans-serif;
+  font-size: 1.8rem;
+  color: var(--gold);
+  line-height: 1.1;
+  margin-top: 0.25rem;
+}
+
+.admin-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  align-items: start;
+}
+
+.admin-span {
+  grid-column: 1 / -1;
+}
+
+.online-dot {
+  color: var(--admin);
+}
+
+@media (max-width: 900px) {
+  .stat-grid,
+  .admin-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.board-grid {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  gap: 1rem;
+  align-items: start;
+}
+
+.board-panel {
+  padding: 0.75rem !important;
+}
+
+.board-panel .section-heading {
+  font-size: 1.05rem;
+  margin-bottom: 0.35rem;
+}
+
+.radar-hours {
+  display: flex;
+  align-items: flex-end;
+  gap: 3px;
+  height: 48px;
+  margin-top: 0.5rem;
+}
+
+.radar-hour {
+  flex: 1;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  min-width: 0;
+}
+
+.radar-bar {
+  width: 100%;
+  min-height: 2px;
+  background: #4a4333;
+  border-radius: 2px 2px 0 0;
+}
+
+.radar-bar.has-games {
+  background: var(--gold);
+}
+
+body.mode-chungu .radar-bar.has-games {
+  background: var(--chungu);
+}
+
+.radar-hour span {
+  font-size: 0.68rem;
+  color: var(--muted);
+  margin-top: 2px;
+  font-weight: 600;
+}
+
+.countdown {
+  font-family: "Varsity Team", Impact, sans-serif;
+  color: var(--gold);
+  font-size: 1.15rem;
+  letter-spacing: 0.03em;
+  line-height: 1.1;
+}
+
+.acca-combined {
+  font-family: "Varsity Team", Impact, sans-serif;
+  font-size: 1.45rem;
+  color: var(--gold);
+  line-height: 1;
+}
+
+.board-panel .acca-combined {
+  margin: 0.25rem 0 !important;
+}
+
+.acca-leg {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.28rem 0;
+  border-bottom: 1px solid #3a3a3a;
+  font-size: 0.9rem;
+  color: #fff8ea;
+}
+
+.board-panel .share-row {
+  margin-top: 0.55rem;
+}
+
+.board-panel .share-row .btn {
+  min-height: 36px;
+  padding: 0.25rem 0.6rem;
+}
+
+.acca-leg strong {
+  color: var(--gold);
+  flex-shrink: 0;
+}
+
+.share-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 0.85rem;
+}
+
+.share-row .btn {
+  min-height: var(--tap);
+}
+
+.nbc-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr));
+  gap: 0.75rem;
+  width: 100%;
+}
+
+.nbc-card {
+  border: 1px solid #3d6a88;
+  background: #172029;
+  border-radius: 0.75rem;
+  padding: 0.9rem;
+}
+
+.nbc-odds {
+  display: flex;
+  gap: 0.4rem;
+  margin-top: 0.6rem;
+}
+
+.nbc-odds span {
+  flex: 1;
+  text-align: center;
+  background: #111;
+  border-radius: 0.4rem;
+  padding: 0.35rem 0.15rem;
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+
+.nbc-odds strong {
+  color: #fff;
+}
+
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem;
+}
+
+.chip {
+  font-size: 0.78rem;
+  border: 1px solid #6d6454;
+  border-radius: 999px;
+  padding: 0.15rem 0.5rem;
+  color: var(--muted);
+  font-weight: 600;
+}
+
+.chip.hot {
+  border-color: var(--gold);
+  color: var(--gold);
+}
+
+.watch-btn {
+  border: 0;
+  background: transparent;
+  color: #d2c4a3;
+  font-size: 1.25rem;
+  line-height: 1;
+  min-width: var(--tap);
+  min-height: var(--tap);
+  padding: 0;
+}
+
+.watch-btn.is-on {
+  color: var(--gold);
+}
+
+.steam-down {
+  color: #5eeba4;
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+
+.steam-up {
+  color: #ff8a8a;
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+
+.alerts-banner {
+  border-color: #7a6418;
+  background: #241d0d;
+}
+
+.odds-mobile {
+  display: none;
+}
+
+.odds-card {
+  border: 1px solid var(--line);
+  border-radius: 0.85rem;
+  padding: 0.9rem;
+  margin-bottom: 0.75rem;
+  background: #191919;
+}
+
+.odds-card-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.odds-card-teams {
+  font-weight: 700;
+  font-size: 1.05rem;
+  line-height: 1.3;
+  word-break: break-word;
+  margin: 0.15rem 0 0.2rem;
+}
+
+.odds-card-pick {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.4rem;
+  margin: 0.55rem 0 0.35rem;
+}
+
+#loading-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 2000;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  background: rgba(8, 8, 8, 0.78);
+  backdrop-filter: blur(4px);
+}
+
+body.is-loading #loading-overlay {
+  display: flex;
+}
+
+.loading-card {
+  text-align: center;
+  padding: 2rem 1.5rem;
+  border: 1px solid #4a3d1d;
+  border-radius: 1rem;
+  background: #1a1a1a;
+  width: min(22rem, calc(100vw - 2rem));
+}
+
+.loading-title {
+  font-family: "Varsity Team", Impact, "Arial Black", sans-serif;
+  color: var(--gold);
+  font-size: 1.6rem;
+  letter-spacing: 0.04em;
+  margin: 1.1rem 0 0.35rem;
+}
+
+.loading-hint {
+  color: var(--tagline);
+  margin: 0;
+}
+
+.honey-spinner {
+  width: 3.1rem;
+  height: 3.1rem;
+  margin: 0 auto;
+  border-radius: 50%;
+  border: 4px solid #3a3324;
+  border-top-color: var(--gold);
+  border-right-color: #ffe08a;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+#tamu-card {
+  display: none;
+}
+
+.acca-dialog {
+  border: 1px solid var(--line);
+  background: var(--card);
+  color: var(--text);
+  border-radius: 0.85rem;
+  padding: 1rem 1.15rem;
+  width: min(26rem, calc(100vw - 2rem));
+}
+
+.acca-dialog::backdrop {
+  background: rgba(8, 8, 8, 0.72);
+}
+
+.acca-dialog-form .form-label {
+  display: block;
+  margin-bottom: 0.35rem;
+}
+
+@media (max-width: 900px) {
+  .board-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .odds-desktop {
+    display: none;
+  }
+
+  .odds-mobile {
+    display: block;
+  }
+
+  .app-header {
+    flex-direction: column;
+  }
+
+  .stat-grid,
+  .admin-grid,
+  .toolbar-pills {
+    grid-template-columns: 1fr;
+    width: 100%;
+  }
+
+  .session-bar {
+    max-width: none;
+    text-align: left;
+    justify-content: flex-start;
+  }
+
+  .share-row .btn,
+  .share-row a.btn {
+    flex: 1 1 calc(50% - 0.5rem);
+  }
+
+  .odds-board.card,
+  .card {
+    padding: 0.85rem !important;
+  }
+
+  .section-heading {
+    font-size: 1.2rem;
+  }
+
+  .radar-hour span {
+    font-size: 0.62rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .app-shell {
+    padding-top: 1rem;
+  }
+
+  .share-row .btn,
+  .share-row a.btn {
+    flex: 1 1 100%;
+  }
+
+  .lang-switch,
+  .mode-switch {
+    width: 100%;
+  }
+
+  .lang-switch .btn,
+  .mode-switch a {
+    flex: 1;
+    justify-content: center;
+    text-align: center;
+  }
+
+  .filter-card .col-6 {
+    flex: 0 0 100%;
+    max-width: 100%;
+  }
+}

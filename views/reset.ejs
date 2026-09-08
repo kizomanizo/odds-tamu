@@ -1,0 +1,22 @@
+<% locals.title = __('auth.reset_title'); locals.heading = locals.title; %>
+<%- include('partials/auth-start') %>
+<p class="meta-copy"><%= __('auth.reset_intro') %></p>
+<form method="POST" action="/reset-password" class="auth-form">
+    <div class="mb-3">
+        <label class="form-label" for="email"><%= __('auth.email') %></label>
+        <input class="form-control bg-dark text-light border-secondary" id="email" name="email" type="email" autocomplete="email" required value="<%= form.email || '' %>">
+    </div>
+    <div class="mb-3">
+        <label class="form-label" for="code"><%= __('auth.reset_code') %></label>
+        <input class="form-control bg-dark text-light border-secondary" id="code" name="code" inputmode="numeric" pattern="[0-9]{6}" maxlength="6" required>
+    </div>
+    <div class="mb-3">
+        <label class="form-label" for="password"><%= __('auth.new_password') %></label>
+        <input class="form-control bg-dark text-light border-secondary" id="password" name="password" type="password" autocomplete="new-password" required minlength="8">
+    </div>
+    <button class="btn btn-warning w-100 fw-bold" type="submit"><%= __('auth.reset_submit') %></button>
+</form>
+<p class="auth-links mt-3 mb-0">
+    <a href="/login"><%= __('auth.back_login') %></a>
+</p>
+<%- include('partials/auth-end') %>

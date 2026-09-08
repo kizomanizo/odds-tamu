@@ -1,0 +1,14 @@
+<% locals.title = __('auth.forgot_title'); locals.heading = locals.title; %>
+<%- include('partials/auth-start') %>
+<p class="meta-copy"><%= __('auth.forgot_intro') %></p>
+<form method="POST" action="/forgot" class="auth-form">
+    <div class="mb-3">
+        <label class="form-label" for="email"><%= __('auth.email') %></label>
+        <input class="form-control bg-dark text-light border-secondary" id="email" name="email" type="email" autocomplete="email" required value="<%= form.email || '' %>">
+    </div>
+    <button class="btn btn-warning w-100 fw-bold" type="submit"><%= __('auth.forgot_submit') %></button>
+</form>
+<p class="auth-links mt-3 mb-0">
+    <a href="/login"><%= __('auth.back_login') %></a>
+</p>
+<%- include('partials/auth-end') %>

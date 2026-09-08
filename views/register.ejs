@@ -1,0 +1,46 @@
+<% locals.title = __('auth.register_title'); locals.heading = locals.title; %>
+<%- include('partials/auth-start') %>
+<form method="POST" action="/register" class="auth-form" id="register-form">
+    <div class="mb-3">
+        <label class="form-label" for="fullName"><%= __('auth.full_name') %></label>
+        <input class="form-control bg-dark text-light border-secondary" id="fullName" name="fullName" autocomplete="name" required minlength="2" maxlength="80" value="<%= form.fullName || '' %>">
+        <div class="field-msg" id="fullName-msg"><%= errors.fullName ? __('auth.errors.' + errors.fullName) : '' %></div>
+    </div>
+    <div class="mb-3">
+        <label class="form-label" for="email"><%= __('auth.email') %></label>
+        <input class="form-control bg-dark text-light border-secondary" id="email" name="email" type="email" autocomplete="email" required value="<%= form.email || '' %>">
+        <div class="field-msg" id="email-msg"><%= errors.email ? __('auth.errors.' + errors.email) : '' %></div>
+    </div>
+    <div class="mb-3">
+        <label class="form-label" for="username"><%= __('auth.username') %></label>
+        <input class="form-control bg-dark text-light border-secondary" id="username" name="username" autocomplete="username" required minlength="3" maxlength="24" value="<%= form.username || '' %>">
+        <div class="meta-copy mt-1"><%= __('auth.username_rules') %></div>
+        <div class="field-msg" id="username-msg"><%= errors.username ? __('auth.errors.' + errors.username) : '' %></div>
+    </div>
+    <div class="mb-3">
+        <label class="form-label" for="password"><%= __('auth.password') %></label>
+        <input class="form-control bg-dark text-light border-secondary" id="password" name="password" type="password" autocomplete="new-password" required minlength="8">
+        <div class="field-msg" id="password-msg"><%= errors.password ? __('auth.errors.' + errors.password) : '' %></div>
+    </div>
+    <p class="meta-copy"><%= __('auth.register_note') %></p>
+    <button class="btn btn-warning w-100 fw-bold" type="submit"><%= __('auth.register_submit') %></button>
+</form>
+<p class="auth-links mt-3 mb-0">
+    <a href="/login"><%= __('auth.have_account') %></a>
+</p>
+<script type="application/json" id="auth-labels"><%- JSON.stringify({
+  available: __('auth.available'),
+  errors: {
+    email_required: __('auth.errors.email_required'),
+    email_invalid: __('auth.errors.email_invalid'),
+    email_taken: __('auth.errors.email_taken'),
+    username_required: __('auth.errors.username_required'),
+    username_invalid: __('auth.errors.username_invalid'),
+    username_taken: __('auth.errors.username_taken'),
+    name_required: __('auth.errors.name_required'),
+    name_invalid: __('auth.errors.name_invalid'),
+    password_short: __('auth.errors.password_short')
+  }
+}).replace(/</g, '\\u003c') %></script>
+<script type="module" src="/js/auth.js"></script>
+<%- include('partials/auth-end') %>

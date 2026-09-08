@@ -1,0 +1,12 @@
+<% locals.title = __('auth.pending_title'); locals.heading = locals.title; %>
+<%- include('partials/auth-start') %>
+<p class="fixture-name"><%= __('auth.pending_body') %></p>
+<div class="contact-box mt-3">
+    <div><%= __('auth.contact_admin') %></div>
+    <a href="tel:+255755437887">+255755437887</a>
+    <div class="mt-1"><%= contact.emailDisplay %></div>
+</div>
+<form method="POST" action="/logout" class="mt-4">
+    <button class="btn btn-outline-light w-100" type="submit"><%= __('session.logout') %></button>
+</form>
+<%- include('partials/auth-end') %>

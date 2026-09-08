@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="<%= currentLang %>" data-bs-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <title><%= __('app_name') %> - <%= __('tagline') %></title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/css/custom.css">
+</head>
+<body class="<%= cache.stale ? 'is-loading' : '' %> mode-<%= mode %>">
+
+<div id="loading-overlay" aria-hidden="<%= cache.stale ? 'false' : 'true' %>" role="status">
+    <div class="loading-card">
+        <div class="honey-spinner" aria-hidden="true"></div>
+        <p class="loading-title"><%= __('loading') %></p>
+        <p class="loading-hint"><%= __('loading_hint') %></p>
+    </div>
+</div>
+
+<div class="container app-shell py-4">
+    <div class="app-header mb-4">
+      <div class="app-brand">
+          <h1 class="brand-title mb-0">🍯 <%= __('app_name') %></h1>
+          <p class="brand-tagline mb-1"><%= __('tagline') %></p>
+          <p class="cache-stamp mb-0" id="odds-updated-at"></p>
+      </div>
+      <div class="app-toolbar">
+          <div class="toolbar-pills">
+              <div class="mode-switch">
+                  <a class="<%= mode === 'tamu' ? 'is-on' : '' %>" href="?mode=tamu&minOdds=<%= prefs.tamu.minOdds %>&maxOdds=<%= prefs.tamu.maxOdds %>&limit=<%= prefs.limit %>"><%= __('mode.tamu') %></a>
+                  <a class="<%= mode === 'chungu' ? 'is-on' : '' %>" href="?mode=chungu&minOdds=<%= prefs.chungu.minOdds %>&maxOdds=<%= prefs.chungu.maxOdds %>&limit=<%= prefs.limit %>"><%= __('mode.chungu') %></a>
+              </div>
+              <% if (currentUser && (currentUser.role === 'ADMIN' || currentUser.role === 'MANAGER')) { %>
+                  <a class="admin-pill" href="/admin"><%= __('admin.button') %></a>
+              <% } %>
+          </div>
+          <div class="mode-hint"><%= mode === 'chungu' ? __('mode.chungu_hint') : __('mode.tamu_hint') %></div>
+          <% if (currentUser) { %>
+          <div class="session-bar">
+              <span><%= __('session.hello') %> <%= currentUser.fullName %></span>
+              <% if (loginStats) { %>
+                  <span>· <%= __('session.visits') %> <%= loginStats.sessionCount %></span>
+                  <% if (loginStats.lastLoginAt) { %>
+                      <span>· <%= __('session.last') %> <%= new Date(loginStats.lastLoginAt).toLocaleString(currentLang === 'sw' ? 'sw-TZ' : 'en-TZ', { timeZone: 'Africa/Dar_es_Salaam' }) %></span>
+                  <% } %>
+                  <% if (loginStats.lastBoard) { %>
+                      <span>· <%= __('session.last_board') %> <%= loginStats.lastBoard.live || 0 %> live / <%= loginStats.lastBoard.today || 0 %> <%= __('session.today') %></span>
+                  <% } %>
+              <% } %>
+              <form method="POST" action="/logout" class="d-inline">
+                  <button class="btn btn-sm btn-outline-light" type="submit"><%= __('session.logout') %></button>
+              </form>
+          </div>
+          <% } %>
+          <div class="lang-switch">
+            <a href="?lang=sw&mode=<%= mode %>&minOdds=<%= minOdds %>&maxOdds=<%= maxOdds %>&limit=<%= limit %>"
+               class="btn btn-sm <%= currentLang === 'sw' ? 'btn-warning' : 'btn-outline-light' %>">Kiswahili</a>
+            <a href="?lang=en&mode=<%= mode %>&minOdds=<%= minOdds %>&maxOdds=<%= maxOdds %>&limit=<%= limit %>"
+               class="btn btn-sm <%= currentLang === 'en' ? 'btn-warning' : 'btn-outline-light' %>">English</a>
+          </div>
+      </div>
+    </div>
+
+    <div id="alerts-panel"></div>
+
+    <div class="board-grid mb-4">
+        <div class="card board-panel p-3" id="radar-panel"></div>
+        <div class="card board-panel p-3" id="ghost-acca"></div>
+    </div>
+
+    <div class="mb-4<%= dashboard.nbcCards && dashboard.nbcCards.length ? '' : ' is-hidden' %>" id="nbc-wrap">
+        <h2 class="section-heading"><%= __('nbc.title') %></h2>
+        <div class="nbc-grid" id="nbc-cards"></div>
+    </div>
+
+    <div class="card mb-4 p-3 filter-card">
+        <h2 class="section-heading"><%= __('filters.title') %></h2>
+        <form method="GET" action="/" class="row g-3">
+          <input type="hidden" name="mode" value="<%= mode %>">
+          <div class="col-6 col-md-3">
+              <label class="form-label small"><%= __('filters.min_odds') %></label>
+              <input type="number" step="0.01" name="minOdds" value="<%= minOdds %>" class="form-control bg-dark text-light border-secondary">
+          </div>
+          <div class="col-6 col-md-3">
+              <label class="form-label small"><%= __('filters.max_odds') %></label>
+              <input type="number" step="0.01" name="maxOdds" value="<%= maxOdds %>" class="form-control bg-dark text-light border-secondary">
+          </div>
+          <div class="col-6 col-md-3">
+              <label class="form-label small"><%= __('filters.max_matches') %></label>
+              <input type="number" name="limit" value="<%= limit %>" class="form-control bg-dark text-light border-secondary">
+          </div>
+          <div class="col-6 col-md-3 d-flex align-items-end">
+              <button type="submit" class="btn btn-warning w-100 fw-bold"><%= __('filters.submit') %></button>
+          </div>
+      </form>
+    </div>
+
+    <ul class="nav nav-tabs odds-tabs mb-3" id="oddsTabs" role="tablist">
+      <li class="nav-item">
+          <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#live" type="button"><%= __('tabs.live') %></button>
+      </li>
+      <li class="nav-item">
+          <button class="nav-link" data-bs-toggle="tab" data-bs-target="#today" type="button"><%= __('tabs.today') %></button>
+      </li>
+      <li class="nav-item">
+          <button class="nav-link" data-bs-toggle="tab" data-bs-target="#week" type="button"><%= __('tabs.week') %></button>
+      </li>
+      <li class="nav-item">
+          <button class="nav-link text-info fw-bold" data-bs-toggle="tab" data-bs-target="#tz" type="button"><%= __('tabs.tz_league') %></button>
+      </li>
+    </ul>
+
+    <div class="tab-content card p-3 odds-board">
+        <div class="tab-pane fade show active" id="live"></div>
+        <div class="tab-pane fade" id="today"></div>
+        <div class="tab-pane fade" id="week"></div>
+        <div class="tab-pane fade" id="tz"></div>
+    </div>
+</div>
+
+<dialog id="acca-history-dialog" class="acca-dialog">
+    <form method="dialog" class="acca-dialog-form">
+        <h2 class="section-heading" id="acca-dialog-title"></h2>
+        <label class="form-label" for="acca-history-date" id="acca-dialog-date-label"></label>
+        <input type="date" id="acca-history-date" class="form-control bg-dark text-light border-secondary" required>
+        <p class="meta-copy mt-2 mb-0" id="acca-dialog-hint"></p>
+        <p class="meta-copy mt-2 mb-0" id="acca-dialog-status"></p>
+        <div class="share-row">
+            <button type="button" class="btn btn-warning" id="acca-dialog-download"></button>
+            <button type="submit" class="btn btn-outline-light" id="acca-dialog-close"></button>
+        </div>
+    </form>
+</dialog>
+
+<canvas id="tamu-card" width="900" height="1200"></canvas>
+
+<script type="application/json" id="odds-tamu-boot"><%- JSON.stringify(boot).replace(/</g, "\\u003c") %></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script type="module" src="/js/main.js"></script>
+</body>
+</html>

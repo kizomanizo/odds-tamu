@@ -1,0 +1,57 @@
+# Dependencies
+node_modules/
+jspm_packages/
+
+# Environment and secrets
+.env
+.env.*
+!.env.example
+!example.env
+
+# Logs and debug
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+.pnpm-debug.log*
+report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
+
+# Runtime / local data
+pids/
+*.pid
+*.seed
+*.pid.lock
+oddstamu.db
+*.db
+*.db-journal
+*.sqlite
+*.sqlite3
+
+# Coverage and caches
+coverage/
+*.lcov
+.nyc_output/
+.npm/
+.eslintcache
+.stylelintcache
+.node_repl_history
+.cache/
+.parcel-cache/
+
+# Build output
+build/Release
+dist/
+*.tgz
+
+# Optional REPL / pack
+.yarn-integrity
+
+# OS and editor
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+*.swo
