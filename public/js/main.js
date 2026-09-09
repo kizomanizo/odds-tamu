@@ -68,7 +68,7 @@ if (!cfg) {
       })
       .join(" ");
     const down = values[values.length - 1] <= values[0];
-    return `<svg class="spark" viewBox="0 0 ${w} ${h}" width="${w}" height="${h}" aria-hidden="true"><polyline fill="none" stroke="${down ? "#3ddc84" : "#ff6b6b"}" stroke-width="1.5" points="${pts}"/></svg>`;
+    return `<svg class="spark" viewBox="0 0 ${w} ${h}" width="${w}" height="${h}" aria-hidden="true"><polyline fill="none" stroke="${down ? "#8fb9a8" : "#d98989"}" stroke-width="1.5" points="${pts}"/></svg>`;
   }
 
   function watchBtn(item) {
@@ -393,17 +393,18 @@ if (!cfg) {
       }
     }
 
-    ctx.fillStyle = "#121212";
+    const accent = cfg.mode === "chungu" ? "#c9896a" : "#e0fbfc";
+    ctx.fillStyle = "#253237";
     ctx.fillRect(0, 0, w, h);
-    ctx.fillStyle = cfg.mode === "chungu" ? "#ff6b35" : "#ffc107";
+    ctx.fillStyle = accent;
     ctx.fillRect(0, 0, w, 16);
 
     ctx.font = '700 72px "Varsity Team", Impact, sans-serif';
-    ctx.fillStyle = cfg.mode === "chungu" ? "#ff6b35" : "#ffc107";
+    ctx.fillStyle = accent;
     ctx.fillText("OddsTamu", 56, 130);
 
     ctx.font = "500 28px sans-serif";
-    ctx.fillStyle = "#e2d3a8";
+    ctx.fillStyle = "#c2dfe3";
     const subtitle = options.dateLabel
       ? `${cfg.mode === "chungu" ? "Chungu" : labels.share_title} · ${options.dateLabel}`
       : cfg.mode === "chungu"
@@ -414,25 +415,25 @@ if (!cfg) {
     let y = 260;
     (acca.legs || []).forEach((leg, i) => {
       ctx.font = "600 28px sans-serif";
-      ctx.fillStyle = "#e8e4dc";
+      ctx.fillStyle = "#e0fbfc";
       ctx.fillText(`${i + 1}. ${leg.homeTeam} vs ${leg.awayTeam}`, 56, y);
       ctx.font = "500 22px sans-serif";
-      ctx.fillStyle = "#cfc6b4";
+      ctx.fillStyle = "#9db4c0";
       ctx.fillText(`${leg.selection}   ${Number(leg.odd).toFixed(2)}`, 56, y + 36);
       y += 92;
     });
 
     if (acca.combined) {
       ctx.font = '700 64px "Varsity Team", Impact, sans-serif';
-      ctx.fillStyle = cfg.mode === "chungu" ? "#ff6b35" : "#ffc107";
+      ctx.fillStyle = accent;
       ctx.fillText(Number(acca.combined).toFixed(2), 56, h - 140);
       ctx.font = "500 22px sans-serif";
-      ctx.fillStyle = "#e2d3a8";
+      ctx.fillStyle = "#c2dfe3";
       ctx.fillText(labels.acca_combined, 56, h - 96);
     }
 
     ctx.font = "400 18px sans-serif";
-    ctx.fillStyle = "#9a9080";
+    ctx.fillStyle = "#9db4c0";
     ctx.fillText(new Date().toLocaleString(cfg.locale || undefined, { timeZone: EAT }), 56, h - 48);
 
     return canvas;

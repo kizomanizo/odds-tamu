@@ -7,15 +7,22 @@
 }
 
 :root {
-  --bg: #121212;
-  --card: #1e1e1e;
-  --line: #3d3d3d;
-  --text: #f4efe4;
-  --muted: #e4d7bf;
-  --tagline: #f0e0a8;
-  --gold: #ffc107;
-  --chungu: #ff6b35;
-  --admin: #2dd4bf;
+  --ice: #e0fbfc;
+  --mist: #c2dfe3;
+  --steel: #9db4c0;
+  --slate: #5c6b73;
+  --jet: #253237;
+  --bg: var(--jet);
+  --card: #2c3a40;
+  --line: var(--slate);
+  --text: var(--ice);
+  --muted: var(--steel);
+  --tagline: var(--mist);
+  --gold: var(--ice);
+  --chungu: #c9896a;
+  --admin: var(--steel);
+  --ok: #8fb9a8;
+  --bad: #d98989;
   --tap: 44px;
 }
 
@@ -24,7 +31,10 @@ html {
 }
 
 body {
-  background-color: var(--bg);
+  background:
+    radial-gradient(ellipse 90% 55% at 8% -8%, rgba(157, 180, 192, 0.16), transparent 52%),
+    radial-gradient(ellipse 60% 40% at 100% 0%, rgba(92, 107, 115, 0.22), transparent 46%),
+    var(--bg);
   color: var(--text);
   overflow-x: hidden;
 }
@@ -125,12 +135,52 @@ body.mode-chungu .acca-combined {
 .form-control {
   min-height: var(--tap);
   color: var(--text);
+  background-color: #1d282c !important;
+  border-color: var(--slate) !important;
 }
 
 .form-control:focus {
-  color: #fff;
-  border-color: var(--gold);
-  box-shadow: 0 0 0 0.15rem rgba(255, 193, 7, 0.2);
+  color: var(--ice);
+  border-color: var(--steel) !important;
+  box-shadow: 0 0 0 0.15rem rgba(157, 180, 192, 0.28);
+}
+
+.btn-warning {
+  --bs-btn-color: var(--jet);
+  --bs-btn-bg: var(--ice);
+  --bs-btn-border-color: var(--ice);
+  --bs-btn-hover-color: var(--jet);
+  --bs-btn-hover-bg: var(--mist);
+  --bs-btn-hover-border-color: var(--mist);
+  --bs-btn-active-color: var(--jet);
+  --bs-btn-active-bg: var(--steel);
+  --bs-btn-active-border-color: var(--steel);
+  --bs-btn-disabled-color: var(--jet);
+  --bs-btn-disabled-bg: var(--slate);
+  --bs-btn-disabled-border-color: var(--slate);
+}
+
+.btn-outline-warning {
+  --bs-btn-color: var(--ice);
+  --bs-btn-border-color: var(--steel);
+  --bs-btn-hover-color: var(--jet);
+  --bs-btn-hover-bg: var(--ice);
+  --bs-btn-hover-border-color: var(--ice);
+}
+
+.btn-outline-light {
+  --bs-btn-color: var(--mist);
+  --bs-btn-border-color: var(--slate);
+  --bs-btn-hover-color: var(--jet);
+  --bs-btn-hover-bg: var(--mist);
+  --bs-btn-hover-border-color: var(--mist);
+}
+
+.btn-outline-info {
+  --bs-btn-color: var(--mist);
+  --bs-btn-border-color: var(--steel);
+  --bs-btn-hover-color: var(--jet);
+  --bs-btn-hover-bg: var(--steel);
 }
 
 .card {
@@ -142,7 +192,7 @@ body.mode-chungu .acca-combined {
 }
 
 .fixture-name {
-  color: #fff8ea;
+  color: var(--ice);
   font-weight: 700;
 }
 
@@ -163,9 +213,9 @@ body.mode-chungu .acca-combined {
 }
 
 .odds-tabs .nav-link.active {
-  background-color: #2b2b2b;
+  background-color: #2c3a40;
   color: var(--gold);
-  border-color: #555 #555 #2b2b2b;
+  border-color: var(--slate) var(--slate) #2c3a40;
 }
 
 body.mode-chungu .odds-tabs .nav-link.active {
@@ -173,9 +223,9 @@ body.mode-chungu .odds-tabs .nav-link.active {
 }
 
 .table-dark {
-  --bs-table-bg: #1e1e1e;
+  --bs-table-bg: #2c3a40;
   --bs-table-color: var(--text);
-  --bs-table-hover-color: #fff8ea;
+  --bs-table-hover-color: var(--ice);
   --bs-table-striped-color: var(--text);
 }
 
@@ -184,27 +234,28 @@ body.mode-chungu .odds-tabs .nav-link.active {
   font-weight: 700;
   font-size: 0.82rem;
   letter-spacing: 0.02em;
-  border-bottom-color: #555;
+  border-bottom-color: var(--slate);
 }
 
 .badge-sweet {
-  background-color: #198754;
+  background-color: #3d5c52;
+  color: var(--ice);
   font-size: 1rem;
 }
 
 body.mode-chungu .badge-sweet {
-  background-color: #c2410c;
+  background-color: #6b4638;
 }
 
 .badge-pick {
-  background: #4b4b4b;
-  color: #fff;
+  background: var(--slate);
+  color: var(--ice);
   font-weight: 600;
 }
 
 .mode-switch {
   display: inline-flex;
-  border: 1px solid #6b5a22;
+  border: 1px solid var(--slate);
   border-radius: 999px;
   overflow: hidden;
 }
@@ -222,13 +273,13 @@ body.mode-chungu .badge-sweet {
 }
 
 .mode-switch a.is-on {
-  background: var(--gold);
-  color: #111;
+  background: var(--ice);
+  color: var(--jet);
 }
 
 body.mode-chungu .mode-switch a.is-on {
   background: var(--chungu);
-  color: #111;
+  color: var(--jet);
 }
 
 .toolbar-pills {
@@ -245,19 +296,19 @@ body.mode-chungu .mode-switch a.is-on {
   min-height: var(--tap);
   padding: 0.45rem 0.95rem;
   border-radius: 999px;
-  border: 1px solid #0f766e;
-  color: var(--admin);
+  border: 1px solid var(--steel);
+  color: var(--mist);
   text-decoration: none;
   font-family: "Varsity Team", Impact, sans-serif;
   letter-spacing: 0.04em;
   font-size: 0.95rem;
-  background: #042f2e;
+  background: #1d282c;
 }
 
 .admin-pill:hover,
 .admin-pill.is-on {
-  background: var(--admin);
-  color: #042f2e;
+  background: var(--steel);
+  color: var(--jet);
 }
 
 .session-bar {
@@ -284,7 +335,7 @@ body.mode-chungu .mode-switch a.is-on {
   justify-content: space-between;
   gap: 0.75rem;
   padding: 0.32rem 0;
-  border-bottom: 1px solid #2f2f2f;
+  border-bottom: 1px solid var(--slate);
   font-size: 0.88rem;
 }
 
@@ -335,13 +386,13 @@ body.mode-chungu .mode-switch a.is-on {
 }
 
 .flash-ok {
-  background: #12352a;
-  color: #8ef0c2;
+  background: #2a4038;
+  color: var(--ok);
 }
 
 .flash-error {
-  background: #3a1515;
-  color: #ffb4b4;
+  background: #3d2c2c;
+  color: var(--bad);
 }
 
 .field-msg {
@@ -353,16 +404,16 @@ body.mode-chungu .mode-switch a.is-on {
 
 .field-msg.is-ok,
 .meta-copy.is-ok {
-  color: #8ef0c2;
+  color: var(--ok);
 }
 
 .field-msg.is-bad,
 .meta-copy.is-bad {
-  color: #ffb4b4;
+  color: var(--bad);
 }
 
 .contact-box {
-  background: #161616;
+  background: #1d282c;
   border: 1px solid var(--line);
   border-radius: 0.7rem;
   padding: 0.85rem 1rem;
@@ -389,7 +440,7 @@ body.mode-chungu .mode-switch a.is-on {
 }
 
 .stat-card.accent-pending {
-  border-color: #b45309;
+  border-color: var(--chungu);
 }
 
 .stat-label {
@@ -467,7 +518,7 @@ body.mode-chungu .mode-switch a.is-on {
 .radar-bar {
   width: 100%;
   min-height: 2px;
-  background: #4a4333;
+  background: #3a4a50;
   border-radius: 2px 2px 0 0;
 }
 
@@ -510,9 +561,9 @@ body.mode-chungu .radar-bar.has-games {
   justify-content: space-between;
   gap: 0.75rem;
   padding: 0.28rem 0;
-  border-bottom: 1px solid #3a3a3a;
+  border-bottom: 1px solid var(--slate);
   font-size: 0.9rem;
-  color: #fff8ea;
+  color: var(--ice);
 }
 
 .board-panel .share-row {
@@ -548,8 +599,8 @@ body.mode-chungu .radar-bar.has-games {
 }
 
 .nbc-card {
-  border: 1px solid #3d6a88;
-  background: #172029;
+  border: 1px solid var(--slate);
+  background: #2a383e;
   border-radius: 0.75rem;
   padding: 0.9rem;
 }
@@ -563,7 +614,7 @@ body.mode-chungu .radar-bar.has-games {
 .nbc-odds span {
   flex: 1;
   text-align: center;
-  background: #111;
+  background: #1d282c;
   border-radius: 0.4rem;
   padding: 0.35rem 0.15rem;
   font-size: 0.85rem;
@@ -571,7 +622,7 @@ body.mode-chungu .radar-bar.has-games {
 }
 
 .nbc-odds strong {
-  color: #fff;
+  color: var(--ice);
 }
 
 .chips {
@@ -582,7 +633,7 @@ body.mode-chungu .radar-bar.has-games {
 
 .chip {
   font-size: 0.78rem;
-  border: 1px solid #6d6454;
+  border: 1px solid var(--slate);
   border-radius: 999px;
   padding: 0.15rem 0.5rem;
   color: var(--muted);
@@ -594,10 +645,17 @@ body.mode-chungu .radar-bar.has-games {
   color: var(--gold);
 }
 
+body.mode-chungu .chip.hot,
+body.mode-chungu .watch-btn.is-on,
+body.mode-chungu .acca-leg strong {
+  color: var(--chungu);
+  border-color: var(--chungu);
+}
+
 .watch-btn {
   border: 0;
   background: transparent;
-  color: #d2c4a3;
+  color: var(--steel);
   font-size: 1.25rem;
   line-height: 1;
   min-width: var(--tap);
@@ -610,20 +668,20 @@ body.mode-chungu .radar-bar.has-games {
 }
 
 .steam-down {
-  color: #5eeba4;
+  color: var(--ok);
   font-size: 0.8rem;
   font-weight: 700;
 }
 
 .steam-up {
-  color: #ff8a8a;
+  color: var(--bad);
   font-size: 0.8rem;
   font-weight: 700;
 }
 
 .alerts-banner {
-  border-color: #7a6418;
-  background: #241d0d;
+  border-color: var(--steel);
+  background: #2a383e;
 }
 
 .odds-mobile {
@@ -635,7 +693,7 @@ body.mode-chungu .radar-bar.has-games {
   border-radius: 0.85rem;
   padding: 0.9rem;
   margin-bottom: 0.75rem;
-  background: #191919;
+  background: #2a383e;
 }
 
 .odds-card-top {
@@ -668,7 +726,7 @@ body.mode-chungu .radar-bar.has-games {
   display: none;
   align-items: center;
   justify-content: center;
-  background: rgba(8, 8, 8, 0.78);
+  background: rgba(37, 50, 55, 0.82);
   backdrop-filter: blur(4px);
 }
 
@@ -679,9 +737,9 @@ body.is-loading #loading-overlay {
 .loading-card {
   text-align: center;
   padding: 2rem 1.5rem;
-  border: 1px solid #4a3d1d;
+  border: 1px solid var(--slate);
   border-radius: 1rem;
-  background: #1a1a1a;
+  background: var(--card);
   width: min(22rem, calc(100vw - 2rem));
 }
 
@@ -703,9 +761,9 @@ body.is-loading #loading-overlay {
   height: 3.1rem;
   margin: 0 auto;
   border-radius: 50%;
-  border: 4px solid #3a3324;
-  border-top-color: var(--gold);
-  border-right-color: #ffe08a;
+  border: 4px solid var(--slate);
+  border-top-color: var(--ice);
+  border-right-color: var(--mist);
   animation: spin 0.8s linear infinite;
 }
 
@@ -729,7 +787,7 @@ body.is-loading #loading-overlay {
 }
 
 .acca-dialog::backdrop {
-  background: rgba(8, 8, 8, 0.72);
+  background: rgba(37, 50, 55, 0.72);
 }
 
 .acca-dialog-form .form-label {
