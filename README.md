@@ -79,6 +79,19 @@ Open `http://localhost:3801` (or whatever `PORT` you set). Unauthenticated visit
 - Set `SESSION_SECRET` to a unique value in production.
 - Behind a reverse proxy, the app already sets `trust proxy`.
 - Bind to your chosen `PORT` and point nginx/caddy at it.
+- Register live-checks use WebSocket at `/ws/availability`, with HTTP `/api/availability` as fallback. For `wss://` to succeed, nginx must forward the upgrade:
+
+```nginx
+location /ws/ {
+    proxy_pass http://127.0.0.1:3801;
+    proxy_http_version 1.1;
+    proxy_set_header Upgrade $http_upgrade;
+    proxy_set_header Connection "upgrade";
+    proxy_set_header Host $host;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header X-Forwarded-Proto $scheme;
+}
+```
 
 ## Project layout
 

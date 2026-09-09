@@ -12,7 +12,7 @@ import * as oddsService from "./services/oddsService.js";
 import * as auth from "./services/authService.js";
 import * as admin from "./services/adminService.js";
 import SqliteStore from "./services/sessionStore.js";
-import { attachAvailability } from "./services/availabilityWs.js";
+import { attachAvailability, lookupAvailability, tooMany } from "./services/availabilityWs.js";
 import { accessLogger, clientIp } from "./services/telemetry.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -132,7 +132,7 @@ const forgotLimiter = rateLimit({
   handler: limitHandler("/forgot"),
 });
 
-const OPEN_PATHS = new Set(["/login", "/register", "/forgot", "/reset-password"]);
+const OPEN_PATHS = new Set(["/login", "/register", "/forgot", "/reset-password", "/api/availability"]);
 
 function isStaff(user) {
   return user && (user.role === "ADMIN" || user.role === "MANAGER");
@@ -256,6 +256,18 @@ function buildBoot({ cache, dashboard, filters, res, currentLang }) {
 function renderAuth(res, view, extra = {}) {
   res.render(view, extra);
 }
+
+app.get("/api/availability", async (req, res) => {
+  const ip = clientIp(req);
+  if (tooMany(ip)) return res.status(429).json({ type: "error", reason: "rate_limited" });
+  try {
+    const result = await lookupAvailability(String(req.query.field || ""), String(req.query.value || ""));
+    res.json(result);
+  } catch (err) {
+    console.error("[Auth] availability failed:", err);
+    res.status(500).json({ type: "error", reason: "generic" });
+  }
+});
 
 app.get("/login", (req, res) => {
   renderAuth(res, "login", { form: { identifier: "" } });

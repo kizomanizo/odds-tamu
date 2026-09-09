@@ -8,42 +8,64 @@ function setMsg(id, text, ok) {
   el.classList.toggle("is-bad", !ok && Boolean(text));
 }
 
-function connect() {
-  const proto = location.protocol === "https:" ? "wss" : "ws";
-  const ws = new WebSocket(`${proto}://${location.host}/ws/availability`);
-  const timers = {};
+function applyResult(msg) {
+  if (!msg || msg.type !== "availability") return;
+  const text = msg.available ? labels.available : (labels.errors && labels.errors[msg.reason]) || msg.reason;
+  setMsg(`${msg.field}-msg`, text, msg.available);
+  const input = document.getElementById(msg.field);
+  if (input) input.classList.toggle("is-invalid", !msg.available);
+}
 
-  ws.addEventListener("message", (event) => {
-    let msg;
-    try {
-      msg = JSON.parse(event.data);
-    } catch {
+async function checkHttp(field, value) {
+  const url = `/api/availability?field=${encodeURIComponent(field)}&value=${encodeURIComponent(value)}`;
+  const res = await fetch(url, { headers: { Accept: "application/json" } });
+  const data = await res.json().catch(() => null);
+  applyResult(data);
+}
+
+function connect() {
+  const timers = {};
+  let socket = null;
+
+  function send(field, value) {
+    if (socket && socket.readyState === WebSocket.OPEN) {
+      socket.send(JSON.stringify({ type: "check", field, value }));
       return;
     }
-    if (msg.type !== "availability") return;
-    const text = msg.available ? labels.available : (labels.errors && labels.errors[msg.reason]) || msg.reason;
-    setMsg(`${msg.field}-msg`, text, msg.available);
-    const input = document.getElementById(msg.field);
-    if (input) input.classList.toggle("is-invalid", !msg.available);
-  });
+    checkHttp(field, value).catch(() => {});
+  }
 
   function watch(field) {
     const input = document.getElementById(field);
     if (!input) return;
-    const send = () => {
-      if (ws.readyState !== WebSocket.OPEN) return;
-      ws.send(JSON.stringify({ type: "check", field, value: input.value }));
-    };
     input.addEventListener("input", () => {
       clearTimeout(timers[field]);
-      timers[field] = setTimeout(send, 300);
+      timers[field] = setTimeout(() => send(field, input.value), 300);
     });
   }
 
-  ws.addEventListener("open", () => {
-    watch("email");
-    watch("username");
-  });
+  watch("email");
+  watch("username");
+
+  try {
+    const proto = location.protocol === "https:" ? "wss" : "ws";
+    socket = new WebSocket(`${proto}://${location.host}/ws/availability`);
+    socket.addEventListener("message", (event) => {
+      try {
+        applyResult(JSON.parse(event.data));
+      } catch {
+        /* ignore */
+      }
+    });
+    socket.addEventListener("error", () => {
+      socket = null;
+    });
+    socket.addEventListener("close", () => {
+      socket = null;
+    });
+  } catch {
+    socket = null;
+  }
 }
 
 const nameInput = document.getElementById("fullName");
@@ -52,7 +74,7 @@ if (nameInput) {
     const value = nameInput.value.trim();
     if (!value) return setMsg("fullName-msg", labels.errors?.name_required, false);
     const ok = /^[\p{L}][\p{L}\s'.-]{1,79}$/u.test(value);
-    setMsg("fullName-msg", ok ? labels.available : labels.errors?.name_invalid, ok);
+    setMsg("fullName-msg", ok ? "" : labels.errors?.name_invalid, ok);
   });
 }
 

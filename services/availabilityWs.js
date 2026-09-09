@@ -25,8 +25,41 @@ function tooMany(ip) {
   return row.count > MAX_PER_WINDOW;
 }
 
+async function lookupAvailability(field, value) {
+  const resolved = field === "username" ? "username" : field === "email" ? "email" : null;
+  if (!resolved) return { type: "error", reason: "bad_field" };
+  const payload = resolved === "email" ? { email: value } : { username: value };
+  const result = await checkAvailability(payload);
+  const row = result[resolved];
+  return {
+    type: "availability",
+    field: resolved,
+    value,
+    available: Boolean(row?.available),
+    reason: row?.reason || null,
+  };
+}
+
 function attachAvailability(server) {
-  const wss = new WebSocketServer({ server, path: "/ws/availability" });
+  const wss = new WebSocketServer({ noServer: true });
+
+  server.on("upgrade", (req, socket, head) => {
+    let pathname = "/";
+    try {
+      pathname = new URL(req.url || "/", "http://localhost").pathname;
+    } catch {
+      socket.destroy();
+      return;
+    }
+    if (pathname !== "/ws/availability") {
+      socket.destroy();
+      return;
+    }
+    wss.handleUpgrade(req, socket, head, (ws) => {
+      wss.emit("connection", ws, req);
+    });
+  });
+
   wss.on("connection", (socket, req) => {
     const ip = clientIp(req);
     socket.on("message", async (raw) => {
@@ -41,23 +74,12 @@ function attachAvailability(server) {
         return;
       }
       if (msg?.type !== "check") return;
-      const field = msg.field === "username" ? "username" : msg.field === "email" ? "email" : null;
-      if (!field) return;
-      const payload = field === "email" ? { email: msg.value } : { username: msg.value };
-      const result = await checkAvailability(payload);
-      const row = result[field];
-      socket.send(
-        JSON.stringify({
-          type: "availability",
-          field,
-          value: msg.value,
-          available: Boolean(row?.available),
-          reason: row?.reason || null,
-        }),
-      );
+      const reply = await lookupAvailability(msg.field, msg.value);
+      socket.send(JSON.stringify(reply));
     });
   });
+
   return wss;
 }
 
-export { attachAvailability };
+export { attachAvailability, lookupAvailability, tooMany };
