@@ -52,25 +52,29 @@ app.use(
 );
 app.use(i18n.init);
 
-app.use((req, res, next) => {
-  console.log(`[DEBUG LOG] ${req.method} ${req.url} - Lang Cookie: ${req.cookies.oddstamu_lang} | Query Lang: ${req.query.lang}`);
-  next();
-});
+const LANG_COOKIE = "oddstamu_lang";
+const LANG_MS = 400 * 24 * 60 * 60 * 1000;
 
 app.use((req, res, next) => {
-  if (req.query.lang) {
-    res.cookie("oddstamu_lang", req.query.lang, { maxAge: 900000, httpOnly: true });
-    req.locale = req.query.lang;
-    i18n.setLocale(req, req.query.lang);
+  let locale = req.query.lang || req.cookies[LANG_COOKIE];
+  if (locale !== "en" && locale !== "sw") locale = "sw";
+  if (req.query.lang || !req.cookies[LANG_COOKIE]) {
+    res.cookie(LANG_COOKIE, locale, { maxAge: LANG_MS, httpOnly: true, sameSite: "lax", path: "/" });
   }
+  req.locale = locale;
+  i18n.setLocale(req, locale);
   res.locals.__ = res.__;
-  res.locals.currentLang = i18n.getLocale(req);
+  res.locals.currentLang = locale;
   res.locals.contact = CONTACT;
+  console.log(`[DEBUG LOG] ${req.method} ${req.url} - Lang: ${locale}${req.query.lang ? ` (query ${req.query.lang})` : ""}`);
   next();
 });
 
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
+app.get("/favicon.ico", (req, res) => {
+  res.type("png").sendFile(path.join(__dirname, "public", "favicon.png"));
+});
 app.use(express.static(path.join(__dirname, "public")));
 app.use("/fonts", express.static(path.join(__dirname, "fonts")));
 
