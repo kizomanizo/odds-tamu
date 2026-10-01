@@ -257,7 +257,7 @@ if (!cfg) {
              ${legs
                .map(
                  (leg) =>
-                   `<div class="acca-leg"><span class="fixture-name">${esc(leg.homeTeam)} vs ${esc(leg.awayTeam)}<br><span class="meta-copy">${esc(leg.selection)}</span></span><strong>${Number(leg.odd).toFixed(2)}</strong></div>`,
+                   `<div class="acca-leg"><span class="fixture-name">${esc(leg.homeTeam)} vs ${esc(leg.awayTeam)}<br><span class="meta-copy">${esc(leg.selection)} · ${esc(formatKickoff(leg.commenceTime))}</span></span><strong>${Number(leg.odd).toFixed(2)}</strong></div>`,
                )
                .join("")}
              <div class="share-row">

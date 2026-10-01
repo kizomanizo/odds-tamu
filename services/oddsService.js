@@ -279,14 +279,21 @@ function sparksFor(history) {
   };
 }
 
+function isUpcomingKickoff(match, now = Date.now()) {
+  if (match.status === "LIVE") return false;
+  const ms = new Date(match.commence_time).getTime();
+  return Number.isFinite(ms) && ms > now;
+}
+
 function buildGhostAcca(rows, minOdds, maxOdds, mode) {
   const legLimit = mode === "chungu" ? 3 : ACCA_LEGS;
   const picked = [];
   const used = new Set();
   const candidates = [];
+  const now = Date.now();
 
   for (const match of rows) {
-    if (match.status === "LIVE") continue;
+    if (!isUpcomingKickoff(match, now)) continue;
     const oneXTwo = outcomeCatalog(match).filter((o) => o.market === "1X2" && inBand(o.odd, minOdds, maxOdds));
     if (!oneXTwo.length) continue;
     const chosen = oneXTwo.reduce((best, o) => (o.odd < best.odd ? o : best));
