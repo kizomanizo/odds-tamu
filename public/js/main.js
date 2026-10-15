@@ -21,9 +21,9 @@ if (!cfg) {
   }
 
   function formatUpdated(ts) {
-    if (!ts) return labels.updated_never || "No Betway refresh yet";
+    if (!ts) return labels.updated_never || "No odds refresh yet";
     const when = new Date(ts);
-    if (Number.isNaN(when.getTime())) return labels.updated_never || "No Betway refresh yet";
+    if (Number.isNaN(when.getTime())) return labels.updated_never || "No odds refresh yet";
     return `${labels.updated_prefix || "Odds updated"} ${when.toLocaleString(cfg.locale || undefined, { timeZone: EAT })}`;
   }
 
@@ -359,7 +359,7 @@ if (!cfg) {
       if (stamp) stamp.textContent = formatUpdated(data.lastFetchAt);
     } catch (err) {
       console.error("[OddsTamu] Refresh failed:", err);
-      if (stamp) stamp.textContent = labels.refresh_failed || "Could not refresh Betway odds; showing local data.";
+      if (stamp) stamp.textContent = labels.refresh_failed || "Could not refresh odds; showing local data.";
     } finally {
       setLoading(false);
     }

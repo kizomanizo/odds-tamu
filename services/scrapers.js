@@ -73,17 +73,21 @@ function decimalFor(outcome, pricesByOutcome) {
 }
 
 function activeMarkets(list, typeName) {
-  return (list || []).filter(
-    (m) =>
-      m.marketTypeCName === typeName &&
-      m.isActive !== false &&
-      m.shouldDisplay !== false &&
-      !m.isSuspended,
-  );
+  const names = (Array.isArray(typeName) ? typeName : [typeName]).map((name) => String(name).toLowerCase());
+  return (list || []).filter((market) => {
+    const cname = String(market.marketTypeCName || "").toLowerCase();
+    const display = String(market.displayName || "").toLowerCase();
+    return (
+      (names.includes(cname) || names.includes(display)) &&
+      market.isActive !== false &&
+      market.shouldDisplay !== false &&
+      !market.isSuspended
+    );
+  });
 }
 
 function parseOneXTwo(event, marketsByEvent, outcomesByMarket, pricesByOutcome) {
-  const markets = activeMarkets(marketsByEvent.get(event.eventId), "win-draw-win");
+  const markets = activeMarkets(marketsByEvent.get(event.eventId), ["1x2", "win-draw-win", "win/draw/win"]);
   if (!markets.length) return null;
 
   const outcomes = (outcomesByMarket.get(markets[0].marketId) || [])
@@ -239,6 +243,7 @@ function normalizeEvents(payload, existingById) {
     const isLive = Boolean(event.isLive);
     const match = {
       id,
+      source: "betway",
       league: event.league || event.region || "Betway",
       homeTeam: event.homeTeam,
       awayTeam: event.awayTeam,
@@ -313,8 +318,9 @@ function persistMatches(matches) {
             home_odd, draw_odd, away_odd, is_tanzania, updated_at,
             dc_1x, dc_12, dc_x2, btts_yes, btts_no, live_score, live_minute
           )
-          VALUES (?, 'betway', ?, ?, ?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP, ?, ?, ?, ?, ?, ?, ?)
+          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP, ?, ?, ?, ?, ?, ?, ?)
           ON CONFLICT(id) DO UPDATE SET
+            sport_key=excluded.sport_key,
             league=excluded.league,
             home_team=excluded.home_team,
             away_team=excluded.away_team,
@@ -337,6 +343,7 @@ function persistMatches(matches) {
         for (const match of matches) {
           upsert.run([
             match.id,
+            match.source || "betway",
             match.league,
             match.homeTeam,
             match.awayTeam,
@@ -440,7 +447,8 @@ async function scrapeBetway() {
 
     const matches = Array.from(byId.values());
     if (!matches.length) {
-      console.warn("[Scraper Notice] Betway returned 0 usable 1X2 matches.");
+      const sample = upcomingPages[0]?.markets?.[0]?.marketTypeCName || highlights.markets?.[0]?.marketTypeCName;
+      console.warn(`[Scraper Notice] Betway returned 0 usable 1X2 matches (sample market: ${sample || "none"}).`);
       return false;
     }
 
@@ -455,4 +463,149 @@ async function scrapeBetway() {
   }
 }
 
-export { scrapeBetway };
+const SPORTY_ORIGIN = "https://www.sportybet.com";
+const SPORTY_PAGE_SIZE = 100;
+const SPORTY_MAX_PAGES = 10;
+const SPORTY_HEADERS = {
+  "User-Agent":
+    "Mozilla/5.0 (Linux; Android 13; Pixel 7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Mobile Safari/537.36",
+  Accept: "application/json, text/plain, */*",
+  "Content-Type": "application/json",
+  Origin: SPORTY_ORIGIN,
+  Referer: `${SPORTY_ORIGIN}/tz/`,
+  ClientId: "web",
+  Platform: "web",
+};
+
+function sportyDecimal(outcome) {
+  if (!outcome || Number(outcome.isActive) === 0) return null;
+  const decimal = Number(outcome.odds);
+  if (!Number.isFinite(decimal) || decimal <= 1) return null;
+  return decimal;
+}
+
+function sportyOutcome(market, pattern) {
+  const outcome = (market?.outcomes || []).find((row) => pattern.test(String(row.desc || "").trim()));
+  return sportyDecimal(outcome);
+}
+
+function isVirtualBlob(blob) {
+  const value = String(blob || "").toLowerCase();
+  return value.includes("esoccer") || value.includes("efootball") || value.includes("virtual") || value.includes("srl");
+}
+
+function mapSportyEvent(event, tournament) {
+  const homeTeam = String(event?.homeTeamName || "").trim();
+  const awayTeam = String(event?.awayTeamName || "").trim();
+  const start = Number(event?.estimateStartTime);
+  if (!homeTeam || !awayTeam || !start) return null;
+
+  const league = tournament?.name || tournament?.categoryName || "SportyBet";
+  const blob = [tournament?.categoryName, tournament?.name, homeTeam, awayTeam].join(" ");
+  if (isVirtualBlob(blob)) return null;
+
+  const markets = event.markets || [];
+  const oneXTwo = markets.find((market) => String(market.id) === "1");
+  const homeOdd = sportyOutcome(oneXTwo, /^home$/i);
+  const drawOdd = sportyOutcome(oneXTwo, /^draw$/i);
+  const awayOdd = sportyOutcome(oneXTwo, /^away$/i);
+  if (!homeOdd || !drawOdd || !awayOdd) return null;
+
+  const doubleChance = markets.find((market) => String(market.id) === "10");
+  const btts = markets.find((market) => String(market.id) === "29");
+  const liveText = String(event.matchStatus || "");
+  const isLive = Number(event.status) === 1 || /^(1st|2nd|ht|live)\b/i.test(liveText);
+  const eventKey = String(event.eventId || event.gameId || "").replace(/[^\w:-]/g, "");
+  if (!eventKey) return null;
+
+  return {
+    id: `sb_${eventKey}`,
+    source: "sportybet",
+    league,
+    homeTeam,
+    awayTeam,
+    commenceTime: new Date(start).toISOString(),
+    status: isLive ? "LIVE" : "NS",
+    homeOdd,
+    drawOdd,
+    awayOdd,
+    dc1x: sportyOutcome(doubleChance, /home or draw/i),
+    dc12: sportyOutcome(doubleChance, /home or away/i),
+    dcX2: sportyOutcome(doubleChance, /draw or away/i),
+    bttsYes: sportyOutcome(btts, /^yes$/i),
+    bttsNo: sportyOutcome(btts, /^no$/i),
+    liveScore: null,
+    liveMinute: isLive ? liveText || null : null,
+    isTanzania: /tanzania|\bnbc\b/i.test(blob) ? 1 : 0,
+  };
+}
+
+async function fetchSportyPage(pageNum) {
+  const res = await axios.post(
+    `${SPORTY_ORIGIN}/api/tz/factsCenter/wapConfigurableEventsByOrder`,
+    {
+      sportId: "sr:sport:1",
+      marketId: "1,10,29",
+      pageSize: SPORTY_PAGE_SIZE,
+      pageNum,
+      option: 1,
+    },
+    { headers: SPORTY_HEADERS, timeout: 25000 },
+  );
+  return res.data || {};
+}
+
+async function scrapeSportyBet() {
+  try {
+    const byId = new Map();
+    for (let page = 1; page <= SPORTY_MAX_PAGES; page++) {
+      let data;
+      try {
+        data = await fetchSportyPage(page);
+      } catch (err) {
+        console.warn(`[Scraper Notice] SportyBet page ${page} failed: ${err.message}`);
+        break;
+      }
+      if (data.bizCode !== 10000) {
+        console.warn(`[Scraper Notice] SportyBet page ${page} rejected: ${data.message || data.bizCode}`);
+        break;
+      }
+      const tournaments = data.data?.tournaments || [];
+      const before = byId.size;
+      for (const tournament of tournaments) {
+        for (const event of tournament.events || []) {
+          const match = mapSportyEvent(event, tournament);
+          if (match) byId.set(match.id, match);
+        }
+      }
+      const added = byId.size - before;
+      console.log(`[Scraper] SportyBet page ${page}: ${tournaments.length} rows, ${added} usable`);
+      if (!tournaments.length || added === 0 || data.data?.moreEvents === false) break;
+    }
+
+    const matches = Array.from(byId.values());
+    if (!matches.length) {
+      console.warn("[Scraper Notice] SportyBet returned 0 usable 1X2 matches.");
+      return false;
+    }
+
+    const stored = await persistMatches(matches);
+    const tzCount = matches.filter((match) => match.isTanzania === 1).length;
+    console.log(`[Scraper] Stored ${stored} SportyBet matches (${tzCount} Tanzania).`);
+    return true;
+  } catch (err) {
+    console.warn(`[Scraper Notice] SportyBet feed skipped: ${err.message}`);
+    return false;
+  }
+}
+
+async function scrapeOdds() {
+  const betwayOk = await scrapeBetway();
+  if (betwayOk) return { ok: true, source: "Betway" };
+  console.warn("[Scraper] Betway had no usable matches; trying SportyBet TZ.");
+  const sportyOk = await scrapeSportyBet();
+  if (sportyOk) return { ok: true, source: "SportyBet" };
+  return { ok: false, source: null };
+}
+
+export { scrapeBetway, scrapeOdds, scrapeSportyBet };

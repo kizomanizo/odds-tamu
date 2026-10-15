@@ -149,7 +149,7 @@
     "chungu_min": "Chungu min",
     "chungu_max": "Chungu max",
     "save_prefs": "Save preferences",
-    "fetch_now": "Fetch Betway now",
+    "fetch_now": "Fetch odds now",
     "resets_title": "Password reset queue",
     "resets_empty": "No reset requests.",
     "issue_reset": "Issue reset",
@@ -164,7 +164,7 @@
     "created_ok": "User created and approved.",
     "created_pending": "User created. Waiting for admin approval.",
     "saved": "Preferences saved.",
-    "fetched": "Betway fetch finished.",
+    "fetched": "Odds fetch finished.",
     "reset_issued": "Tell the user this code and temporary password",
     "failed": "That action failed.",
     "stat": {

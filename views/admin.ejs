@@ -173,7 +173,7 @@
             <hr class="border-secondary">
             <p class="meta-copy" id="fetch-stamp">
                 <%= __('updated_prefix') %>:
-                <%= overview.cache.lastFetchAt ? new Date(overview.cache.lastFetchAt).toLocaleString(currentLang === 'sw' ? 'sw-TZ' : 'en-TZ', { timeZone: 'Africa/Dar_es_Salaam' }) : __('updated_never') %>
+                <%= overview.cache.lastFetchAt ? new Date(overview.cache.lastFetchAt).toLocaleString(currentLang === 'sw' ? 'sw-TZ' : 'en-TZ', { timeZone: 'Africa/Dar_es_Salaam' }) : __('updated_never') %><%= overview.cache.source ? " · " + overview.cache.source : "" %>
             </p>
             <button class="btn btn-outline-info" type="button" id="admin-fetch"><%= __('admin.fetch_now') %></button>
             <p class="meta-copy mt-2 mb-0" id="fetch-status"></p>

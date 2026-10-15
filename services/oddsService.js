@@ -1,5 +1,5 @@
 import db from "../database.js";
-import { scrapeBetway } from "./scrapers.js";
+import { scrapeOdds } from "./scrapers.js";
 
 const CACHE_MS = 60 * 60 * 1000;
 const EAT = "Africa/Dar_es_Salaam";
@@ -45,13 +45,14 @@ async function setMeta(key, value) {
 }
 
 async function getCacheInfo() {
-  const raw = await getMeta("betway_last_fetch_at");
+  const [raw, source] = await Promise.all([getMeta("betway_last_fetch_at"), getMeta("odds_source")]);
   const lastFetchAt = raw ? Number(raw) : 0;
   const ageMs = lastFetchAt ? Date.now() - lastFetchAt : null;
   return {
     lastFetchAt: lastFetchAt || null,
     stale: !lastFetchAt || ageMs >= CACHE_MS,
     ageMs,
+    source: source || null,
   };
 }
 
@@ -101,17 +102,22 @@ async function fetchAndCacheOdds({ force } = {}) {
   const info = await getCacheInfo();
   if (!force && !info.stale) {
     const minutes = Math.max(0, Math.round((info.ageMs || 0) / 60000));
-    console.log(`[Cache] Serving local odds (${minutes} min old); Betway skipped.`);
+    console.log(`[Cache] Serving local odds (${minutes} min old); refresh skipped.`);
     return info;
   }
 
   if (inFlight) return inFlight;
 
   inFlight = (async () => {
-    console.log(force ? "[Cache] Manual Betway fetch requested..." : "[Cache] Local odds are older than 1 hour; querying Betway...");
-    const ok = await scrapeBetway();
-    if (ok) await setMeta("betway_last_fetch_at", String(Date.now()));
-    else console.warn("[Cache] Betway refresh failed; keeping existing local odds.");
+    console.log(force ? "[Cache] Manual odds fetch requested..." : "[Cache] Local odds are older than 1 hour; querying feeds...");
+    const result = await scrapeOdds();
+    if (result.ok) {
+      await setMeta("betway_last_fetch_at", String(Date.now()));
+      await setMeta("odds_source", result.source);
+      console.log(`[Cache] Odds refresh stored from ${result.source}.`);
+    } else {
+      console.warn("[Cache] Odds refresh failed; keeping existing local odds.");
+    }
     return getCacheInfo();
   })().finally(() => {
     inFlight = null;

@@ -149,7 +149,7 @@
     "chungu_min": "Chungu chini",
     "chungu_max": "Chungu juu",
     "save_prefs": "Hifadhi vigezo",
-    "fetch_now": "Vuta Betway sasa",
+    "fetch_now": "Vuta odds sasa",
     "resets_title": "Foleni ya nenosiri",
     "resets_empty": "Hakuna maombi.",
     "issue_reset": "Toa nenosiri jipya",
@@ -164,7 +164,7 @@
     "created_ok": "Mtumiaji ametengenezwa na kuidhinishwa.",
     "created_pending": "Mtumiaji ametengenezwa. Anasubiri idhini ya admin.",
     "saved": "Vigezo vimehifadhiwa.",
-    "fetched": "Kuvuta Betway kumekamilika.",
+    "fetched": "Kuvuta odds kumekamilika.",
     "reset_issued": "Mwambie mtumiaji namba hii na nenosiri la muda",
     "failed": "Hatua hiyo imeshindikana.",
     "stat": {
